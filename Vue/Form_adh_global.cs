@@ -16,7 +16,7 @@ namespace gestion_conservatoire_musique
     public partial class Form_adh_principal : Form
     {
 
-/*INITIALISATION & VARIABLE */
+/*INITIALISATION & VARIABLE-----------------------------------------------------------------------*/
 
         Mgr monManager;
         public List<Adherent> liste_adh_form = new List<Adherent>();
@@ -26,9 +26,13 @@ namespace gestion_conservatoire_musique
         {
             InitializeComponent();
             monManager = new Mgr();
+            lbl_payee.Visible = false;
+            panel_payee.Visible = false;
+/*            txt_inscription_crediter.Visible = false;
+            btn_inscription_crediter.Visible = false;*/
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void Formadh_principal_Load(object sender, EventArgs e)
         {
             liste_adh_form = monManager.chargement_liste_adh();
             if(liste_adh_form.Count != 0) 
@@ -38,9 +42,9 @@ namespace gestion_conservatoire_musique
         }
 
 
-/*UPDATE ON CLICK*/
+/*UPDATE CLICK SUR LISTBOX --------------------------------------------------------------------------------------------*/
 
-        /*METHODE : click (ou pas) listbox des inscriptions, pour 1 adherent selectionne*/
+        /*METHODE : click (ou pas) listbox des adherents, affichant les inscriptions dans la 2e listbox*/
         private void listBox_adherent_SelectedIndexChanged(object sender, EventArgs e)
         {
 
@@ -67,11 +71,26 @@ namespace gestion_conservatoire_musique
 
         }
 
-        /*METHODE : click*/
+        /*METHODE : click (ou pas) listbox des inscriptions, pour voir l'état du paiement de celle-ci*/
         private void listBox_adherent_inscription_SelectedIndexChanged(object sender, EventArgs e)
         {
+            int i = listBox_adherent_inscription.SelectedIndex;
+
+            if (i != -1)
+            {
+                Inscription inscription_adh_choisie = liste_inscription_form[i];
+                panelPaye_colorChange(inscription_adh_choisie.Inscription_validee);
+            }
+            else
+            {
+                panel_payee.Visible = false;
+                lbl_payee.Visible = false;
+            }
 
         }
+
+
+/*METHODE : CLICK BUTTON --------------------------------------------------------------------*/
 
         private void btn_adherent_modify_Click(object sender, EventArgs e)
         {
@@ -99,33 +118,82 @@ namespace gestion_conservatoire_musique
             int i;
             i = listBox_adherent.SelectedIndex;
 
-            Adherent adh_selectionne_suppr = liste_adh_form[i];
-
-            DialogResult user_choix;
-
-            user_choix = MessageBox.Show("Voulez-vous vraiment le supprimer ?", "Suppression adherent", 
-                MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-            if(user_choix == DialogResult.Yes)
+            if (i != -1)
             {
+                Adherent adh_selectionne_suppr = liste_adh_form[i];
 
-                monManager.delete_adh(adh_selectionne_suppr);
+                DialogResult user_choix;
 
-                liste_adh_form = monManager.chargement_liste_adh();
+                user_choix = MessageBox.Show("Voulez-vous vraiment le supprimer ?", "Suppression adherent",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
-                liste_adh_form.Count();
-                update_listbox_adh(i);
-                MessageBox.Show("Suppression effectuee");
+                if (user_choix == DialogResult.Yes)
+                {
+
+                    monManager.delete_adh(adh_selectionne_suppr);
+
+                    liste_adh_form = monManager.chargement_liste_adh();
+
+                    try
+                    {
+                        update_listbox_adh(i);
+                    }
+                    catch (Exception emp)
+                    {
+                        MessageBox.Show("Erreur suppression");
+                    }
+                    MessageBox.Show("Suppression effectuee");
+                }
             }
-
-
 
         }
 
 
-/* FONCTIONS POUR CHARGER/UPDATE LES LISTBOX */
+        private void btn_inscription_crediter_Click(object sender, EventArgs e)
+        {
 
-        /*METHODE : charger-update listbox des adherents*/
+            int i;
+            i = listBox_adherent_inscription.SelectedIndex;
+
+            if(i != -1) /*TEST : il faut AU MOINS 1 inscription dans la listbox des inscriptions*/
+            {
+
+                Inscription inscription_a_crediter = liste_inscription_form[i];
+                int montant_aCrediter = 0;
+
+                try
+                {
+                    montant_aCrediter = Convert.ToInt32(txt_inscription_crediter.Text);
+
+                    inscription_a_crediter.modifier_inscription_credit(inscription_a_crediter, montant_aCrediter);
+
+                    /*A MODIFIER*/
+                    monManager.update_inscription_credit(inscription_a_crediter);
+
+                    liste_inscription_form = monManager.chargement_liste_inscription(inscription_a_crediter.Adherent_inscription_selectionne);
+
+                    update_listbox_inscription(i);
+                }
+                catch
+                {
+                    MessageBox.Show("Entrée utilisateur invalide - valeur numérique attendue");
+                }
+
+                txt_inscription_crediter.Text = "";
+                MessageBox.Show("FIN opération CREDIT");
+
+            } 
+            else
+            {
+                MessageBox.Show("INSCRIPTION DEJA VALIDEE");
+            }
+
+        }
+
+
+        /* FONCTIONS POUR CHARGER/UPDATE LES LISTBOX -----------------------------------------------------------------------------*/
+
+        /*METHODE ADHERENTS : charger-update listbox des ADHERENTS*/
         private void update_listbox_adh(int index)
         {
             listBox_adherent.DataSource = null;
@@ -134,14 +202,14 @@ namespace gestion_conservatoire_musique
             listBox_adherent.SetSelected(index, true);
         }
 
-        /*METHODE : update listbox des inscriptions, pour AUCUN adherent selectionne*/
+        /*METHODE INSCRIPTIONS : update listbox des INSCRIPTIONS, pour AUCUN adherent selectionne*/
         private void update_listbox_inscription_rien()
         {
             listBox_adherent_inscription.DataSource = null;
             /*listBox_adherent_inscription.DisplayMember = "Description";*/
         }
 
-        /*METHODE : update listbox des inscriptions, pour 1 adherent selectionne*/
+        /*METHODE INSCRIPTIONS : update listbox des INSCRIPTIONS, pour 1 adherent selectionne*/
         private void update_listbox_inscription(int index)
         {
             listBox_adherent_inscription.DataSource = null;
@@ -149,8 +217,34 @@ namespace gestion_conservatoire_musique
             listBox_adherent_inscription.DataSource = liste_inscription_form;
             /*listBox_adherent_inscription.DisplayMember = "Description";*/
             listBox_adherent_inscription.SetSelected(index, true);
+
+
         }
 
+        private void panelPaye_colorChange(int boolColor)
+        {
+            if(boolColor == 0)
+            {
+                panel_payee.BackColor = Color.Red;
+                panel_payee.Visible = true;
+                lbl_payee.Text = "INSCRIPTION NON PAYEE";
+                lbl_payee.Visible = true;
+            } 
+            else if(boolColor == 1)
+            {
+                panel_payee.BackColor = Color.Green;
+                panel_payee.Visible = true;
+                lbl_payee.Text = "INSCRIPTION PAYEE";
+                lbl_payee.Visible = true;
+            }
+            else /*Pas utile*/
+            {
+                panel_payee.BackColor = Color.Black;
+                panel_payee.Visible = false;
+                lbl_payee.Text = "A DEFINIR";
+                lbl_payee.Visible = false;
+            }
+        }
 
     }
 }
