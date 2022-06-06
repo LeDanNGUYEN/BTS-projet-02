@@ -52,6 +52,12 @@
     <Compile Include="DAL\ConnexionSql.cs" />
     <Compile Include="DAL\Fabrique.cs" />
     <Compile Include="DAL\InscriptionDao.cs" />
+    <Compile Include="Vue\Form_inscription_detail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Vue\Form_inscription_detail.Designer.cs">
+      <DependentUpon>Form_inscription_detail.cs</DependentUpon>
+    </Compile>
     <Compile Include="Modele\Adherent.cs" />
     <Compile Include="Modele\Cours.cs" />
     <Compile Include="Modele\Inscription.cs" />
@@ -86,6 +92,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Vue\Form_inscription_detail.resx">
+      <DependentUpon>Form_inscription_detail.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

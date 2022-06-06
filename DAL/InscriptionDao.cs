@@ -36,7 +36,8 @@ namespace gestion_conservatoire_musique.DAL
                     "inst.instrument_nom, " +
                     "p.prof_nom, p.prof_prenom, " +
                     "a.nom, a.prenom, a.tel, a.adresse, a.mail, " +
-                    "insc.paye " +
+                    "insc.paye, insc.inscription_prixPaye, " +
+                    "c.cours_prix " + 
                     "FROM inscription AS insc " +
                     "INNER JOIN adherent AS a ON insc.idAdherent = a.adherent_id " +
                     "INNER JOIN cours AS c ON insc.idCours = c.cours_id " +
@@ -71,6 +72,8 @@ namespace gestion_conservatoire_musique.DAL
                     string adh_mail = reader.GetString(11);
 
                     int payee = (int)reader.GetValue(12);
+                    int montant_paye = (int)reader.GetValue(13);
+                    int cours_prix = (int)reader.GetValue(14);
 
                     Inscription inscription_adherent_seule = new Inscription(
                         num_adh, num_cours,
@@ -78,7 +81,8 @@ namespace gestion_conservatoire_musique.DAL
                         instrument_nom,
                         prof_nom,prof_prenom,
                         adh_selectionne,
-                        payee
+                        payee, montant_paye,
+                        cours_prix
                     );
 
                     liste_inscription.Add(inscription_adherent_seule);
@@ -98,5 +102,27 @@ namespace gestion_conservatoire_musique.DAL
             return liste_inscription;
 
         }
+
+        public void updateInscriptionCreditBdd(Inscription inscription_a_changer)
+        {
+/*            inscription_a_changer.Inscription_montantPaye;
+            inscription_a_changer.Inscription_validee;*/
+            try
+            {
+                maCommandeSql = maConnexionSql.reqExec("UPDATE inscription insc " +
+                    "SET insc.inscription_prixPaye = "+ inscription_a_changer.Inscription_montantPaye + ", " +
+                    "insc.paye = " + inscription_a_changer.Inscription_validee + " " +
+                    "WHERE insc.idAdherent = " + inscription_a_changer.Num_adh + " " +
+                    "AND insc.idCours = " + inscription_a_changer.Num_cours);
+
+                maCommandeSql.ExecuteNonQuery();
+            }
+            catch(Exception emp)
+            {
+                throw (emp);
+            }
+
+        }
+
     }
 }

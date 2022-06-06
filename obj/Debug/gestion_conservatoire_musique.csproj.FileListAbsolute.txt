@@ -23,3 +23,4 @@ C:\Users\ldn75\source\repos\gestion_conservatoire_musique\obj\Debug\gestion_cons
 C:\Users\ldn75\source\repos\gestion_conservatoire_musique\obj\Debug\gestion_conservatoire_musique.pdb
 C:\Users\ldn75\source\repos\gestion_conservatoire_musique\obj\Debug\gestion_conservatoire_musique.Vue.Form_adh_detail.resources
 C:\Users\ldn75\source\repos\gestion_conservatoire_musique\obj\Debug\gestion_conservatoire_musique.Form_adh_principal.resources
+C:\Users\ldn75\source\repos\gestion_conservatoire_musique\obj\Debug\gestion_conservatoire_musique.Form_inscription_detail.resources
