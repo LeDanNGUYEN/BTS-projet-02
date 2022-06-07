@@ -40,9 +40,10 @@ namespace gestion_conservatoire_musique.Controleur
             inscription_liste.updateInscriptionCreditBdd(inscription_a_changer);
         }
 
-
-
-
+        public void delete_inscription(Inscription inscription_adh_choisie)
+        {
+            inscription_liste.deleteInscriptionBdd(inscription_adh_choisie);
+        }
     }
 }
 

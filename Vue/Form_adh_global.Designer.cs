@@ -39,6 +39,8 @@ namespace gestion_conservatoire_musique
             this.lbl_inscription_lstboxInscriptionsAdh = new System.Windows.Forms.Label();
             this.btn_inscription_crediter = new System.Windows.Forms.Button();
             this.txt_inscription_crediter = new System.Windows.Forms.TextBox();
+            this.btn_inscription_validationBool = new System.Windows.Forms.Button();
+            this.btn_desinscription = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox_adherent
@@ -89,7 +91,7 @@ namespace gestion_conservatoire_musique
             this.listBox_adherent_inscription.ItemHeight = 16;
             this.listBox_adherent_inscription.Location = new System.Drawing.Point(559, 57);
             this.listBox_adherent_inscription.Name = "listBox_adherent_inscription";
-            this.listBox_adherent_inscription.Size = new System.Drawing.Size(925, 292);
+            this.listBox_adherent_inscription.Size = new System.Drawing.Size(965, 292);
             this.listBox_adherent_inscription.TabIndex = 4;
             this.listBox_adherent_inscription.SelectedIndexChanged += new System.EventHandler(this.listBox_adherent_inscription_SelectedIndexChanged);
             // 
@@ -139,11 +141,33 @@ namespace gestion_conservatoire_musique
             this.txt_inscription_crediter.Size = new System.Drawing.Size(126, 22);
             this.txt_inscription_crediter.TabIndex = 9;
             // 
+            // btn_inscription_validationBool
+            // 
+            this.btn_inscription_validationBool.Location = new System.Drawing.Point(696, 417);
+            this.btn_inscription_validationBool.Name = "btn_inscription_validationBool";
+            this.btn_inscription_validationBool.Size = new System.Drawing.Size(126, 32);
+            this.btn_inscription_validationBool.TabIndex = 10;
+            this.btn_inscription_validationBool.Text = "(in)validation";
+            this.btn_inscription_validationBool.UseVisualStyleBackColor = true;
+            this.btn_inscription_validationBool.Click += new System.EventHandler(this.btn_inscription_validationBool_Click);
+            // 
+            // btn_desinscription
+            // 
+            this.btn_desinscription.Location = new System.Drawing.Point(1398, 417);
+            this.btn_desinscription.Name = "btn_desinscription";
+            this.btn_desinscription.Size = new System.Drawing.Size(126, 32);
+            this.btn_desinscription.TabIndex = 11;
+            this.btn_desinscription.Text = "desinscrire";
+            this.btn_desinscription.UseVisualStyleBackColor = true;
+            this.btn_desinscription.Click += new System.EventHandler(this.btn_desinscription_Click);
+            // 
             // Form_adh_principal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1612, 491);
+            this.ClientSize = new System.Drawing.Size(1544, 491);
+            this.Controls.Add(this.btn_desinscription);
+            this.Controls.Add(this.btn_inscription_validationBool);
             this.Controls.Add(this.txt_inscription_crediter);
             this.Controls.Add(this.btn_inscription_crediter);
             this.Controls.Add(this.lbl_inscription_lstboxInscriptionsAdh);
@@ -174,6 +198,8 @@ namespace gestion_conservatoire_musique
         private System.Windows.Forms.Label lbl_inscription_lstboxInscriptionsAdh;
         private System.Windows.Forms.Button btn_inscription_crediter;
         private System.Windows.Forms.TextBox txt_inscription_crediter;
+        private System.Windows.Forms.Button btn_inscription_validationBool;
+        private System.Windows.Forms.Button btn_desinscription;
     }
 }
 

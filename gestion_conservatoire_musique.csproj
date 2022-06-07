@@ -52,6 +52,8 @@
     <Compile Include="DAL\ConnexionSql.cs" />
     <Compile Include="DAL\Fabrique.cs" />
     <Compile Include="DAL\InscriptionDao.cs" />
+    <Compile Include="DAL\ProfDao.cs" />
+    <Compile Include="Modele\Person.cs" />
     <Compile Include="Vue\Form_inscription_detail.cs">
       <SubType>Form</SubType>
     </Compile>

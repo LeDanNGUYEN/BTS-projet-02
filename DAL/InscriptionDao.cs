@@ -15,7 +15,6 @@ namespace gestion_conservatoire_musique.DAL
 
         private ConnexionSql maConnexionSql;
         private MySqlCommand maCommandeSql;
-        private AdherentDao adh_bdd;
 
         public List<Inscription> getInscription_adh(Adherent adh_selectionne)
         {
@@ -31,25 +30,21 @@ namespace gestion_conservatoire_musique.DAL
 
                 maCommandeSql = maConnexionSql.reqExec(
                     "SELECT " +
-                    "insc.idAdherent, insc.idCours, " +
-                    "c.horaire, c.nbPlace, " +
+                    "insc.inscription_adherentId, insc.inscription_coursId, " +
+                    "c.cours_horaire, c.cours_nbPlaces, " +
                     "inst.instrument_nom, " +
-                    "p.prof_nom, p.prof_prenom, " +
-                    "a.nom, a.prenom, a.tel, a.adresse, a.mail, " +
-                    "insc.paye, insc.inscription_prixPaye, " +
-                    "c.cours_prix " + 
+                    "personProf.person_nom, personProf.person_prenom, " +
+                    "insc.inscription_validee, insc.inscription_montantPaye, " +
+                    "c.cours_prix " +
                     "FROM inscription AS insc " +
-                    "INNER JOIN adherent AS a ON insc.idAdherent = a.adherent_id " +
-                    "INNER JOIN cours AS c ON insc.idCours = c.cours_id " +
-                    "INNER JOIN instrument AS inst ON c.idInstrument = inst.instrument_id " +
-                    "INNER JOIN professeur AS p ON c.idProfesseur = p.professeur_id "+
-                    "WHERE insc.idAdherent = " + adh_selectionne.Num
-                    );
+                    "INNER JOIN cours AS c ON insc.inscription_coursId = c.cours_id " +
+                    "INNER JOIN instrument AS inst ON c.cours_instrumentId = inst.instrument_id " +
+                    "INNER JOIN person AS personProf ON c.cours_professeurId = personProf.person_id " +
+                    "WHERE insc.inscription_adherentId = " + adh_selectionne.Id
+                    ); 
 
                 MySqlDataReader reader = maCommandeSql.ExecuteReader();
 
-
-               
 
                 while (reader.Read())
                 {
@@ -57,7 +52,10 @@ namespace gestion_conservatoire_musique.DAL
                     int num_adh = (int)reader.GetValue(0);
                     int num_cours = (int)reader.GetValue(1);
 
-                    string cours_horaire = reader.GetString(2);
+                    DateTime cours_horaire_0 = reader.GetDateTime(2);
+                    string cours_horaire = cours_horaire_0.ToString();
+                    /*string cours_horaire = reader.GetString(2);*/
+
                     int cours_nbPlace = (int)reader.GetValue(3);
 
                     string instrument_nom = reader.GetString(4);
@@ -65,15 +63,10 @@ namespace gestion_conservatoire_musique.DAL
                     string prof_nom = reader.GetString(5);
                     string prof_prenom = reader.GetString(6);
 
-                    string adh_nom = reader.GetString(7);
-                    string adh_prenom = reader.GetString(8);
-                    string adh_tel = reader.GetString(9);
-                    string adh_adresse = reader.GetString(10);
-                    string adh_mail = reader.GetString(11);
+                    int payee = (int)reader.GetValue(7);
+                    int montant_paye = (int)reader.GetValue(8);
+                    int cours_prix = (int)reader.GetValue(9);
 
-                    int payee = (int)reader.GetValue(12);
-                    int montant_paye = (int)reader.GetValue(13);
-                    int cours_prix = (int)reader.GetValue(14);
 
                     Inscription inscription_adherent_seule = new Inscription(
                         num_adh, num_cours,
@@ -91,7 +84,7 @@ namespace gestion_conservatoire_musique.DAL
 
                 reader.Close();
 
-                /*maConnexionSql.closeConnection();*/
+                maConnexionSql.closeConnection();
 
             }
             catch(Exception emp)
@@ -105,23 +98,60 @@ namespace gestion_conservatoire_musique.DAL
 
         public void updateInscriptionCreditBdd(Inscription inscription_a_changer)
         {
-/*            inscription_a_changer.Inscription_montantPaye;
-            inscription_a_changer.Inscription_validee;*/
             try
             {
+
+                maConnexionSql = ConnexionSql.getInstance(Fabrique.ProviderMysql, Fabrique.DataBaseMysql, Fabrique.UidMysql, Fabrique.MdpMysql);
+
+                maConnexionSql.openConnection();
+
                 maCommandeSql = maConnexionSql.reqExec("UPDATE inscription insc " +
-                    "SET insc.inscription_prixPaye = "+ inscription_a_changer.Inscription_montantPaye + ", " +
-                    "insc.paye = " + inscription_a_changer.Inscription_validee + " " +
-                    "WHERE insc.idAdherent = " + inscription_a_changer.Num_adh + " " +
-                    "AND insc.idCours = " + inscription_a_changer.Num_cours);
+                    "SET insc.inscription_montantPaye = " + inscription_a_changer.Inscription_montantPaye + ", " +
+                    "insc.inscription_validee = " + inscription_a_changer.Inscription_validee + " " +
+                    "WHERE insc.inscription_adherentId = " + inscription_a_changer.Num_adh + " " +
+                    "AND insc.inscription_coursId = " + inscription_a_changer.Num_cours);
 
                 maCommandeSql.ExecuteNonQuery();
+
+                maConnexionSql.closeConnection();
             }
             catch(Exception emp)
             {
                 throw (emp);
             }
 
+        }
+
+        public void deleteInscriptionBdd(Inscription inscription_adh_choisie)
+        {
+            try
+            {
+
+                if(inscription_adh_choisie.Inscription_montantPaye == 0)
+                {
+                    maConnexionSql = ConnexionSql.getInstance(Fabrique.ProviderMysql, Fabrique.DataBaseMysql, Fabrique.UidMysql, Fabrique.MdpMysql);
+
+                    maConnexionSql.openConnection();
+
+                    maCommandeSql = maConnexionSql.reqExec("DELETE FROM inscription " +
+                        "WHERE inscription_adherentId = " + inscription_adh_choisie.Num_adh + " " +
+                        "AND inscription_coursId = " + inscription_adh_choisie.Num_cours + " " +
+                        "AND inscription_montantPaye = 0"
+                        );
+                    maCommandeSql.ExecuteNonQuery();
+
+                    maConnexionSql.closeConnection();
+                }
+                else
+                {
+                    MessageBox.Show("Suppression impossible - règlement commencé", "Suppression inscription");
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Suppression impossible - ERREUR", "Suppression inscription");
+            }
         }
 
     }

@@ -27,13 +27,6 @@ namespace gestion_conservatoire_musique.Modele
         private string prof_prenom;
 
         private Adherent adherent_inscription_selectionne;
-/*        
-private string adh_nom;
-private string adh_prenom;
-private string adh_tel;
-private string adh_adresse;
-private string adh_mail;
-*/
 
 
 /*CONSTRUCTOR*/
@@ -64,7 +57,7 @@ private string adh_mail;
         }
 
 
-/*GETTER - SETTER*/
+        /*GETTER - SETTER*/
 
         public int Num_adh { get => num_adh; }
         public int Num_cours { get => num_cours; }
@@ -74,30 +67,53 @@ private string adh_mail;
         public string Prof_nom { get => prof_nom; }
         public string Prof_prenom { get => prof_prenom; }
         public Adherent Adherent_inscription_selectionne { get => adherent_inscription_selectionne; }
-        public int Inscription_validee { get => inscription_validee; set => inscription_validee = 1; }
+        public int Inscription_validee { get => inscription_validee; set => inscription_validee = value; }
         public int Inscription_montantPaye { get => inscription_montantPaye; set => inscription_montantPaye = value; }
         public int Cours_prix { get => cours_prix; }
+
 
 
         /*METHODES*/
 
         public override string ToString()
         {
-            string texte = ("N°Cours :" + this.Num_cours
-                            + " | " + /*"Horaire : " +*/ this.Cours_horaire
-                            + " | " + /*"Places dispo : " +*/ this.Cours_nbPlace + " places"
-                            + " | " + "Instru : " + this.Instrument_nom
-                            + " | " + "Prof : " + this.Prof_nom + " " + this.Prof_prenom)
+            string texte = "N°Cours :" + this.Num_cours
+                            + " | " + this.Cours_horaire
+                            + " | " + this.Cours_nbPlace + " places"
+                            + " | " + this.Instrument_nom
+                            + " | " + "Prof : " + this.Prof_nom + " " + this.Prof_prenom
                             /*+ " | " + "PAYE : " + this.inscription_validee*/
-                            + " | " + "PRIX COURS : " + this.Cours_prix;
+                            + " | " + "Prix cours : " + this.Cours_prix;
 
             if (this.Inscription_validee == 0)
             {
+
                 texte = texte + " | " + "PAYE : " + this.Inscription_montantPaye
-                                + " | " + "RESTE A PAYER : " + (this.Cours_prix - this.Inscription_montantPaye);
+                                    + " | " + "RESTE A PAYER : ";
+
+                if (this.cours_prix != this.Inscription_montantPaye)
+                {
+                    texte = texte + "" + (this.Cours_prix - this.Inscription_montantPaye);
+                }
+                else
+                {
+                    texte = texte + "rien"
+                                    + " | " + "INVALIDEE";
+                }
+
             } else if(this.inscription_validee == 1)
             {
-                texte += " | VALIDE";
+                if (this.cours_prix != this.Inscription_montantPaye)
+                {
+                    texte = texte + " | " + "PAYE : " + this.Inscription_montantPaye
+                                    + " | " + "RESTE A PAYER : " + (this.Cours_prix - this.Inscription_montantPaye)
+                                    + " | " + "mais VALIDEE";
+                }
+                else
+                {
+                    texte += " | VALIDEE";
+                }
+
             }
 
             return texte;    
@@ -144,33 +160,33 @@ private string adh_mail;
                             if (montant_restantApayer == 0) /*Si montant totalement payé avec crédit, VALIDATION*/
                             {
                                 inscription_a_crediter.Inscription_validee = 1;
-                                MessageBox.Show("INSCRIPTION VALIDEE");
+                                MessageBox.Show("INSCRIPTION VALIDEE", "Crédit inscription");
                             }
                             else
                             {
-                                MessageBox.Show("Il reste à payer " + montant_restantApayer + " euros");
+                                MessageBox.Show("Il reste à payer " + montant_restantApayer + " euros", "Crédit inscription");
                             }
 
                         }
                         else
                         {
-                            MessageBox.Show("Crédit invalidé car trop grand - Réessayez");
+                            MessageBox.Show("Crédit invalidé car trop grand - Réessayez", "Crédit inscription");
                         }
 
                     }
                     else
                     {
-                        MessageBox.Show("Refus crédit - inscription déjà validée");
+                        MessageBox.Show("Refus crédit - inscription déjà validée", "Crédit inscription");
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Montant crédit INVALIDE - valeur positive attendue");
+                    MessageBox.Show("Montant crédit INVALIDE - valeur positive attendue", "Crédit inscription");
                 }
             }
             else
             {
-                MessageBox.Show("Crédit refusé - inscription déjà validée ");
+                MessageBox.Show("Crédit refusé - inscription déjà validée ", "Crédit inscription");
             }
 
         }

@@ -27,7 +27,7 @@ namespace gestion_conservatoire_musique.Vue
         }
         private void Form_adh_detail_Load(object sender, EventArgs e)
         {
-            txt_formDetail_adhId.Text = adh_detail.Num.ToString();
+            txt_formDetail_adhId.Text = adh_detail.Id.ToString();
             txt_formDetail_adhNom.Text = adh_detail.Nom;
             txt_formDetail_adhPrenom.Text = adh_detail.Prenom;
             txt_formDetail_adhTel.Text = adh_detail.Tel;

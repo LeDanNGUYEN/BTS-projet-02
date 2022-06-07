@@ -58,7 +58,8 @@ namespace gestion_conservatoire_musique.DAL
             {
 
                 if (null == connection)
-                { // Premier appel
+                {
+                    // Premier appel
 
                     connection = new ConnexionSql(unProvider, uneDataBase, unUid, unMdp);
 
@@ -86,6 +87,9 @@ namespace gestion_conservatoire_musique.DAL
                 oleCn.Open();
         }
 
+        /**
+        * Fermeture de la connexion
+        */
         //Close connection
         public void closeConnection()
         {
@@ -101,10 +105,6 @@ namespace gestion_conservatoire_musique.DAL
 
             return (res);
         }
-
-        /**
-         * Fermeture de la connexion
-         */
 
 
         /**

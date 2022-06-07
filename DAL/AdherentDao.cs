@@ -21,6 +21,7 @@ namespace gestion_conservatoire_musique.DAL
         {
 
             List<Adherent> list_adherents = new List<Adherent>();
+            List<int> list_idAdherents = new List<int>();
 
             try
             {
@@ -33,25 +34,41 @@ namespace gestion_conservatoire_musique.DAL
 
                 MySqlDataReader reader = commandeSql.ExecuteReader();
 
-                Adherent adherent_seul;
-
                 while (reader.Read())
                 {
-
-                    int numero = (int)reader.GetValue(0);
-                    string nom = (string)reader.GetValue(1);
-                    string prenom = (string)reader.GetValue(2);
-                    string telephone = (string)reader.GetValue(3);
-                    string adresse = (string)reader.GetValue(4);
-                    string mail = (string)reader.GetValue(5);
-
-                    adherent_seul = new Adherent(numero, nom, prenom, telephone, adresse, mail);
-
-                    list_adherents.Add(adherent_seul);
-
+                    int idAdherent = (int)reader.GetValue(0);
+                    list_idAdherents.Add(idAdherent);
                 }
 
                 reader.Close();
+
+                foreach(int i in list_idAdherents)
+                {
+
+                    commandeSql = maConnexionSql.reqExec("SELECT * FROM person WHERE person_id = " + i);
+
+                    MySqlDataReader reader2 = commandeSql.ExecuteReader();
+
+                    Adherent adherent_seul;
+
+                    while (reader2.Read())
+                    {
+
+                        int id = (int)reader2.GetValue(0);
+                        string nom = (string)reader2.GetValue(1);
+                        string prenom = (string)reader2.GetValue(2);
+                        string tel = (string)reader2.GetValue(3);
+                        string adresse = (string)reader2.GetValue(4);
+                        string mail = (string)reader2.GetValue(5);
+
+                        adherent_seul = new Adherent(id, nom, prenom, tel, adresse, mail);
+
+                        list_adherents.Add(adherent_seul);
+
+                    }
+
+                    reader2.Close();
+                }
 
                 maConnexionSql.closeConnection();
 
@@ -70,13 +87,20 @@ namespace gestion_conservatoire_musique.DAL
         {
             try
             {
-                commandeSql = maConnexionSql.reqExec("UPDATE adherent adh " +
-                    "SET adh.adresse = '" + adh_selectionne.Adresse + "', " +
-                    "adh.tel = '" + adh_selectionne.Tel + "', " +
-                    "adh.mail = '" + adh_selectionne.Mail + "' " +
-                    "WHERE adh.adherent_id = " + adh_selectionne.Num );
+
+                maConnexionSql = ConnexionSql.getInstance(Fabrique.ProviderMysql, Fabrique.DataBaseMysql, Fabrique.UidMysql, Fabrique.MdpMysql);
+
+                maConnexionSql.openConnection();
+
+                commandeSql = maConnexionSql.reqExec("UPDATE person p " +
+                    "SET p.person_adresse = '" + adh_selectionne.Adresse + "', " +
+                    "p.person_tel = '" + adh_selectionne.Tel + "', " +
+                    "p.person_mail = '" + adh_selectionne.Mail + "' " +
+                    "WHERE p.person_id = " + adh_selectionne.Id);
 
                 commandeSql.ExecuteNonQuery();
+
+                maConnexionSql.closeConnection();
             }
             catch (Exception emp)
             {
@@ -89,16 +113,21 @@ namespace gestion_conservatoire_musique.DAL
         {
             try
             {
-                commandeSql = maConnexionSql.reqExec("DELETE FROM adherent WHERE adherent.adherent_id = " + adh_selectionne.Num);
 
+                maConnexionSql = ConnexionSql.getInstance(Fabrique.ProviderMysql, Fabrique.DataBaseMysql, Fabrique.UidMysql, Fabrique.MdpMysql);
+
+                maConnexionSql.openConnection();
+
+                commandeSql = maConnexionSql.reqExec("DELETE FROM adherent WHERE adherent_id = " + adh_selectionne.Id);
                 commandeSql.ExecuteNonQuery();
+
+                maConnexionSql.closeConnection();
             }
-            catch (Exception emp)
+            catch
             {
-                throw (emp);
+                MessageBox.Show("Suppression impossible - inscrit(e) à des cours","Suppression adhérent");
             }
         }
-
 
 
     }

@@ -10,7 +10,8 @@ namespace gestion_conservatoire_musique.DAL
     {
         private static string providerMysql = "localhost";
 
-        private static string dataBaseMysql = "conservatoire_v0";
+/*        private static string dataBaseMysql = "conservatoire_v0";*/
+        private static string dataBaseMysql = "conservatoire_v1";
 
         private static string uidMysql = "root";
 
